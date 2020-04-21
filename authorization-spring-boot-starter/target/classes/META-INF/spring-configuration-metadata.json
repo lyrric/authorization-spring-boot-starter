@@ -1,0 +1,51 @@
+{
+  "groups": [
+    {
+      "name": "auth",
+      "type": "com.github.lyrric.auth.propertites.AuthProperties",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "auth.cookie-key",
+      "type": "java.lang.String",
+      "description": "cookie的key",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties",
+      "defaultValue": "auth-key"
+    },
+    {
+      "name": "auth.exclude-path-patterns",
+      "type": "java.lang.String[]",
+      "description": "要排除拦截的url，支持通配符",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties"
+    },
+    {
+      "name": "auth.include-path-patterns",
+      "type": "java.lang.String[]",
+      "description": "要拦截的url，支持通配符",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties"
+    },
+    {
+      "name": "auth.max-time",
+      "type": "java.lang.Long",
+      "description": "用户资源保存时间，默认为12小时，单位秒",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties"
+    },
+    {
+      "name": "auth.open",
+      "type": "java.lang.Boolean",
+      "description": "总开关，默认为true",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties",
+      "defaultValue": true
+    },
+    {
+      "name": "auth.redis-pre-fix",
+      "type": "java.lang.String",
+      "description": "数据存储在redis中的前缀",
+      "sourceType": "com.github.lyrric.auth.propertites.AuthProperties",
+      "defaultValue": "auth:user:"
+    }
+  ],
+  "hints": []
+}

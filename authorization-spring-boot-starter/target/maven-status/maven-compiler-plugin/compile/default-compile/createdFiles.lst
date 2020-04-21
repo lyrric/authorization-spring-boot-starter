@@ -1,0 +1,8 @@
+com\github\lyrric\auth\handler\AuthHandler.class
+com\github\lyrric\auth\AuthConfiguration.class
+com\github\lyrric\auth\core\AuthUserService.class
+com\github\lyrric\auth\model\HttpResult.class
+com\github\lyrric\auth\annotation\Auth.class
+com\github\lyrric\auth\propertites\AuthProperties.class
+com\github\lyrric\auth\core\DefaultAuthUserService.class
+META-INF\spring-configuration-metadata.json
