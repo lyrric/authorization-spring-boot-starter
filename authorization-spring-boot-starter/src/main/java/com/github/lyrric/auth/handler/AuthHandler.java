@@ -42,12 +42,12 @@ public class AuthHandler extends HandlerInterceptorAdapter {
                 }
                 //进行登录校验
                 if(!isLogin()){
-                    print(baseAuthUserService.msgWithoutLogin(), response);
+                    baseAuthUserService.onWithoutLogin(response);
                     return false;
                 }
                 int[] codes = auth.resources();
                 if(!auth(codes)){
-                    print(baseAuthUserService.msgWithoutPermission(), response);
+                    baseAuthUserService.onWithoutPermission(response);
                     return false;
                 }
             }
@@ -76,16 +76,5 @@ public class AuthHandler extends HandlerInterceptorAdapter {
         return Arrays.stream(codes).anyMatch(userCodes::contains);
     }
 
-    /**
-     * 鉴权失败时，返回json
-     * @param json
-     * @return
-     */
-    private void print(String json, HttpServletResponse response) throws IOException {
-        PrintWriter writer = response.getWriter();
-        response.setContentType("application/json;charset=UTF-8");
-        writer.write(json);
-        writer.flush();
-        writer.close();
-    }
+
 }

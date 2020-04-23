@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -79,13 +80,15 @@ public abstract class BaseAuthUserService {
 
     /**
      * 未登录时
+     * @param response
      * @return 返回的信息，json格式
      */
-    abstract public String msgWithoutLogin();
+    abstract public void onWithoutLogin(HttpServletResponse response);
 
     /**
      * 已登录，但是没有权限时
+     * @param response
      * @return 返回的信息，json格式
      */
-    abstract public String msgWithoutPermission();
+    abstract public void onWithoutPermission(HttpServletResponse response);
 }

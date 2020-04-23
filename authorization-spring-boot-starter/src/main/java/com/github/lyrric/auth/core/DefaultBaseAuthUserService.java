@@ -11,6 +11,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -71,12 +73,31 @@ public class DefaultBaseAuthUserService extends BaseAuthUserService {
     }
 
     @Override
-    public String msgWithoutLogin() {
-        return JSONObject.toJSONString(HttpResult.failure("你还没有登录"));
+    public void onWithoutLogin(HttpServletResponse response) {
+        print(JSONObject.toJSONString(HttpResult.failure("你还没有登录")), response);
     }
 
     @Override
-    public String msgWithoutPermission() {
-        return JSONObject.toJSONString(HttpResult.failure("权限不足"));
+    public void onWithoutPermission(HttpServletResponse response) {
+        print(JSONObject.toJSONString(HttpResult.failure("权限不足")), response);
+
+    }
+
+    /**
+     * 鉴权失败时，返回json
+     * @param json
+     * @return
+     */
+    private void print(String json, HttpServletResponse response){
+        try {
+            PrintWriter writer = response.getWriter();
+            response.setContentType("application/json;charset=UTF-8");
+            writer.write(json);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
