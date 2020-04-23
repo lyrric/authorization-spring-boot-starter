@@ -27,14 +27,14 @@ public class TestController {
     @ApiOperation(value = "登录")
     @PostMapping(value = "/login")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "用户唯一标识", name = "userId", paramType = "query",  dataType = "int", defaultValue = "10000"),
+            @ApiImplicitParam(value = "用户名", name = "username", paramType = "query",  dataType = "int", defaultValue = "test"),
             @ApiImplicitParam(value = "权限资源列表，数字，以逗号分割", name = "resourcesStr", paramType = "query",  dataType = "String", defaultValue = "2,3")
     })
-    String login(Integer userId, String resourcesStr){
+    String login(String username, String resourcesStr){
         resourcesStr = resourcesStr.replace("，", ",");
         Set<Integer> resources = Arrays.stream(resourcesStr.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
         //需要手动保存一下用户权限
-        baseAuthUserService.saveUserResources(userId.toString(), resources);
+        baseAuthUserService.saveUserResources(resources);
         return "登录成功";
     }
 
@@ -64,6 +64,7 @@ public class TestController {
     @ApiOperation(value = "退出登录")
     @GetMapping(value = "/logout")
     String logout(){
+        baseAuthUserService.logout();
         return "你已退出登录";
     }
 

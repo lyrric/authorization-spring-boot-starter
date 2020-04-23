@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.lyrric.auth.model.HttpResult;
 import com.github.lyrric.auth.propertites.AuthProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -37,28 +38,20 @@ public class DefaultBaseAuthUserService extends BaseAuthUserService {
     }
 
     @Override
-    public void saveUserResources(String userUniqueIdentification, Set<Integer> resources) {
-        super.saveUserResources(userUniqueIdentification, resources);
-        //保存用户登录信息
-        String uuid = UUID.randomUUID().toString();
-        String key = authProperties.getRedisPreFix().concat("login:").concat(uuid);
-        redisTemplate.opsForValue().set(key, userUniqueIdentification, authProperties.getMaxTime(), TimeUnit.SECONDS);
+    public void saveUserResources(Set<Integer> resources) {
         //设置cookie
-        HttpServletResponse response = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
-        Objects.requireNonNull(response).addCookie(new Cookie(authProperties.getCookieKey(), uuid));
+        String userUniqueIdentification = getUserUniqueIdentification();
+        if(StringUtils.isEmpty(userUniqueIdentification)){
+            userUniqueIdentification = UUID.randomUUID().toString().replaceAll("-", "");
+            HttpServletResponse response = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
+            Objects.requireNonNull(response).addCookie(new Cookie(authProperties.getCookieKey(), userUniqueIdentification));
+        }
+        super.saveUserResources(resources);
     }
+
 
     @Override
     String getUserUniqueIdentification() {
-        String token = getToken();
-        if(StringUtils.isEmpty(token)){
-            return null;
-        }
-        String key = authProperties.getRedisPreFix().concat("login:").concat(token);
-        return redisTemplate.opsForValue().get(key);
-    }
-
-    private String getToken(){
         //从cookie中获取uuid
         AtomicReference<String> token = new AtomicReference<>();
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
@@ -71,7 +64,6 @@ public class DefaultBaseAuthUserService extends BaseAuthUserService {
                 .ifPresent(cookie -> token.set(cookie.getValue()));
         return token.get();
     }
-
     @Override
     public void onWithoutLogin(HttpServletResponse response) {
         print(JSONObject.toJSONString(HttpResult.failure("你还没有登录")), response);

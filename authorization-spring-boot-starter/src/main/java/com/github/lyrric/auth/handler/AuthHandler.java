@@ -41,7 +41,7 @@ public class AuthHandler extends HandlerInterceptorAdapter {
                     return true;
                 }
                 //进行登录校验
-                if(!isLogin()){
+                if(!baseAuthUserService.isLogin()){
                     baseAuthUserService.onWithoutLogin(response);
                     return false;
                 }
@@ -53,14 +53,6 @@ public class AuthHandler extends HandlerInterceptorAdapter {
             }
         }
         return true;
-    }
-
-    /**
-     * 是否登录判断
-     * @return
-     */
-    private boolean isLogin(){
-        return baseAuthUserService.getUserResources() != null;
     }
 
     /**

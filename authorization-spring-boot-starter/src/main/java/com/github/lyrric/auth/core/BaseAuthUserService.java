@@ -2,6 +2,7 @@ package com.github.lyrric.auth.core;
 
 import com.github.lyrric.auth.propertites.AuthProperties;
 import com.github.lyrric.auth.util.SpringContextUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -30,16 +31,15 @@ public abstract class BaseAuthUserService {
         if(authProperties == null){
             authProperties = SpringContextUtil.getBean(AuthProperties.class);
         }
-
     }
 
     /**
      * 保存权限到redis
-     * @param userUniqueIdentification 用户唯一标识
      * @param resources 权限列表
      */
-    public void saveUserResources(String userUniqueIdentification, Set<Integer> resources){
+    public void saveUserResources(Set<Integer> resources){
         init();
+        String userUniqueIdentification = getUserUniqueIdentification();
         if(userUniqueIdentification == null){
             throw new NullPointerException("用户唯一标志不能为空");
         }
@@ -58,6 +58,7 @@ public abstract class BaseAuthUserService {
         redisTemplate.expire(resourceKey, authProperties.getMaxTime(), TimeUnit.SECONDS);
     }
 
+
     /**
      * 获取权限列表
      */
@@ -65,12 +66,34 @@ public abstract class BaseAuthUserService {
         init();
         String userUniqueIdentification = getUserUniqueIdentification();
         if(userUniqueIdentification == null){
-            return new HashSet<>();
+            return null;
         }
         String resourceKey = authProperties.getRedisPreFix().concat("resources:").concat(userUniqueIdentification);
         return redisTemplate.boundSetOps(resourceKey).members();
     }
+    /**
+     * 获取权限列表
+     */
+    public Boolean isLogin(){
+        init();
+        String userUniqueIdentification = getUserUniqueIdentification();
+        if(userUniqueIdentification == null){
+            return false;
+        }
+        String resourceKey = authProperties.getRedisPreFix().concat("resources:").concat(userUniqueIdentification);
+        return redisTemplate.hasKey(resourceKey);
+    }
 
+    /**
+     * 注销登录，删除用户redis数据
+     */
+    public void logout(){
+        String userUniqueIdentification = getUserUniqueIdentification();
+        if(StringUtils.isNotEmpty(userUniqueIdentification)){
+            String resourceKey = authProperties.getRedisPreFix().concat("resources:").concat(userUniqueIdentification);
+            redisTemplate.delete(resourceKey);
+        }
+    }
     /**
      * 获取当前线程的用户唯一标识符
      * 需要重写
@@ -91,4 +114,6 @@ public abstract class BaseAuthUserService {
      * @return 返回的信息，json格式
      */
     abstract public void onWithoutPermission(HttpServletResponse response);
+
+
 }
