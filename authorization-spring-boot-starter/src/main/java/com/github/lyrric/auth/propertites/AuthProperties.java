@@ -31,10 +31,6 @@ public class AuthProperties {
      * 要拦截的url，支持通配符
      */
     private String[] includePathPatterns;
-    /**
-     * 要排除拦截的url，支持通配符
-     */
-    private String[] excludePathPatterns;
 
     public Boolean getOpen() {
         return open;
@@ -74,13 +70,5 @@ public class AuthProperties {
 
     public void setIncludePathPatterns(String[] includePathPatterns) {
         this.includePathPatterns = includePathPatterns;
-    }
-
-    public String[] getExcludePathPatterns() {
-        return excludePathPatterns;
-    }
-
-    public void setExcludePathPatterns(String[] excludePathPatterns) {
-        this.excludePathPatterns = excludePathPatterns;
     }
 }

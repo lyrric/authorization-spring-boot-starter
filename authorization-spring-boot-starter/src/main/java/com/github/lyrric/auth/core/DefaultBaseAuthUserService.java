@@ -4,11 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.lyrric.auth.model.HttpResult;
 import com.github.lyrric.auth.propertites.AuthProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,14 +32,14 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class DefaultBaseAuthUserService extends BaseAuthUserService {
 
+
     private AuthProperties authProperties;
 
-    private StringRedisTemplate redisTemplate;
 
-    public DefaultBaseAuthUserService(AuthProperties authProperties, StringRedisTemplate redisTemplate) {
+    public DefaultBaseAuthUserService(AuthProperties authProperties) {
         this.authProperties = authProperties;
-        this.redisTemplate = redisTemplate;
     }
+
 
     @Override
     public void saveUserResources(Set<Integer> resources) {

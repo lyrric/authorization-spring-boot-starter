@@ -35,9 +35,9 @@ public class AuthConfiguration implements WebMvcConfigurer {
     @Resource
     private AuthProperties authProperties;
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
-    @Resource
     private RedisConnectionFactory factory;
+    @Resource
+    private AuthHandler authHandler;
 
     @Bean
     public RedisTemplate<String, Integer> redisTemplate(){
@@ -49,6 +49,7 @@ public class AuthConfiguration implements WebMvcConfigurer {
         redisTemplate.setConnectionFactory(factory);
         return redisTemplate;
     }
+
     /**
      * 如果用户没有实现AuthUserService，则使用默认的DefaultAuthUserService
      * @return
@@ -56,26 +57,15 @@ public class AuthConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean
     @Bean
     public BaseAuthUserService baseAuthUserService(){
-        return new DefaultBaseAuthUserService(authProperties, stringRedisTemplate);
+        return new DefaultBaseAuthUserService(authProperties);
     }
 
     @Bean
     public AuthHandler authHandler(){
         return new AuthHandler(authProperties, baseAuthUserService());
     }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration = registry.addInterceptor(authHandler());
-        String[] includePathPatterns = authProperties.getIncludePathPatterns();
-        String[] excludePathPatterns = authProperties.getExcludePathPatterns();
-        if(includePathPatterns == null || includePathPatterns.length == 0){
-            registration.addPathPatterns("/**");
-        }else{
-            registration.addPathPatterns(Arrays.asList(includePathPatterns));
-        }
-        if(excludePathPatterns != null && excludePathPatterns.length != 0){
-            registration.excludePathPatterns(Arrays.asList(excludePathPatterns));
-        }
+       registry.addInterceptor(authHandler).addPathPatterns("/**");
     }
 }

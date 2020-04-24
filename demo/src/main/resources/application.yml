@@ -11,5 +11,3 @@ spring:
       charset: utf-8
       enabled: true
       force: true
-auth:
-  exclude-path-patterns: /swagger-resources/**,/v2/api-docs/**
